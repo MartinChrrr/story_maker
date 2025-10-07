@@ -7,8 +7,15 @@
 </head>
 <body>
     <h1>Galerie</h1>
-    {% for i in imagelist %}
-    <img src = "{{ url_for('static', filename=i)}}">
+    {% for i in images %}
+    <img src = "{{ url_for('static', filename= i.filename)}}">
+    <p>{{i.description}}</p>
+    <p>Tu es nul</p>
+
     {% endfor %}
+    <!-- {% for j in descriptions %}
+    <p>{{j}}</p>
+
+    {% endfor %} -->
 </body>
 </html>

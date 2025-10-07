@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 import psycopg2
 import hashlib
 from werkzeug.utils import secure_filename
+import llm as l
 
 UPLOAD_FOLDER = "./static/uploaded_images/"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -30,12 +31,14 @@ class Image(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(80), nullable=False)
     data = db.Column(db.LargeBinary, nullable=False)
-    hash = db.Column(db.String(32), unique=True, nullable=False)  
+    hash = db.Column(db.String(32), unique=True, nullable=False)
+    description = db.Column(db.TEXT, unique=True, nullable=True)
+    one_line = db.Column(db.TEXT, unique=True, nullable=True)
+    
 
 
 
-def get_md5_from_file(file):
-    # file doit être un objet de type FileStorage de Flask
+def get_md5_from_file(file):  
     file.seek(0)
     file_content = file.read()
     file.seek(0)
@@ -48,10 +51,9 @@ def allowed_file(filename):
 
 
 def get_hash(img_path):
-    # This function will return the `md5` checksum for any input image.
     with open(img_path, "rb") as f:
         img_hash = hashlib.md5()
-        while chunk := f.read(8192):
+        while chunk := f.read(8192): #random number
            img_hash.update(chunk)
     return img_hash.hexdigest()
 
@@ -60,27 +62,19 @@ def get_hash(img_path):
 def index():
     return render_template("index.html")
 
-#local
-# @app.route("/gallery")
-# def gallery():
-    # IMG_LIST = os.listdir("static/uploaded_images")
-    # IMG_LIST = ["uploaded_images/" + i for i in IMG_LIST]
-    # imagelist=IMG_LIST
-    # return render_template("gallery.html", imagelist=IMG_LIST)
-
 @app.route("/gallery")
 def gallery():
     images = Image.query.all()
     img_list = []
+    descriptions = []
     for img in images:
         dir = "uploaded_images/"
         string = dir + img.filename
-        img_list.append(string)
-    return render_template("gallery.html", imagelist=img_list)
+        img.filename = string
+    return render_template("gallery.html", images=images)
 
 @app.route("/new_character", methods=['GET', 'POST'])
 def new_character():
-
     if request.method == 'POST':
         if 'file' not in request.files:
             return 'No file part'
@@ -89,18 +83,22 @@ def new_character():
             return 'No selected file'
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            # Hash et obtention du contenu binaire
+            # Get hash
             img_hash, file_content = get_md5_from_file(file)
             
-            # Vérification existence dans la base
+            # Check if hash match in database
             if Image.query.filter_by(hash=img_hash).first():
                 return "Cette image existe déjà dans la base."
             
-            # Enregistrement dans la base
-            new_img = Image(filename=filename, data=file_content, hash=img_hash)
+            # Save in database
+            path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(path)
+
+            desc = l.get_image_description(path)
+            new_img = Image(filename=filename, data=file_content, hash=img_hash, description=desc)
             db.session.add(new_img)
             db.session.commit()
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
     return render_template("new_character.html")
             
  

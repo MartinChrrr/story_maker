@@ -28,31 +28,18 @@
             </div>
         </nav>
     </header>
-
-    <main class="flex flex-col items-center ">
-  
-    <form method="POST" enctype="multipart/form-data" class="flex flex-col items-center text-3xl font-bold  border-4 border-dashed border-[#5FA5FF] m-10 p-30 mt-30">
-        <h1 class="text-[#5FA5FF] text-5xl  font-bold mb-5  ">Upload an Image</h1>
-     
-        <label class="text-white text-20 bg-[#FFC73C] hover:bg-[#FFB700] focus:ring-4 focus:ring-blue-300 
-                    font-medium rounded-full shadow-md text-sm px-7.5 py-2.5 dark:bg-blue-600 
-                    dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 mt-5" for="user_image">Choose a Picture</label>
-        <input type="file" id="user_image" name="user_image" class="hidden">
-    </form>
-    
-
-
+    <main class="flex flex-col items-center p-10 m-5">
+        <img src="../static/uploaded_images/1.jpg" alt="Picture of the story" class="rounded-xl h-100 w-3/4 object-cover border-4 border-solid border-white">
+        <h1 class="mt-5 pb-10 text-3xl font-black uppercase"> {{image.title}}</h1>
+        <p class="w-3/4 pb-10"> {{image.description}}</p>
+        <a href="{{ url_for('gallery') }}" 
+        class="text-white text-20 bg-[#FFC73C] hover:bg-[#FFB700] focus:ring-4 focus:ring-blue-300 
+        font-medium rounded-full shadow-md text-sm px-7.5 py-2.5 dark:bg-blue-600 
+        dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Go Back to stories</a>
     </main>
+   
+
+      
     
 </body>
-
-<script>
-  //auto submit 
-  document.getElementById('user_image').addEventListener('change', function() {
-    if (this.files.length > 0) {
-      this.form.submit();
-      
-    }
-  });
-</script>
 </html>

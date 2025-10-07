@@ -4,25 +4,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script> 
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="./static/css/style.css">
+
+    <link rel="stylesheet" href="../static/css/style.css">
+
 </head>
-<body>
+<body class="bg-[#FFF3CC] px-40 my-10 font-comic">
     <header>
-        <nav class="bg-sky-500/100">
-            <a href="new_character" >Ajouter un personnage</a>
-            <a href="gallery" >Voir les personnages</a>
+
+        <nav class=" flex justify-between mx-5">
+            <div class="flex flex-row ">
+                <i class="bi bi-book-half text-3xl px-3 text-[#FFC73C]"></i>
+                <h1 class="text-3xl font-extrabold">StorySparkle</h1>
+            </div>
+            <div class="flex justitfy-around ">
+                <a class="mx-8" href="{{ url_for('index') }}" >Home </a>
+                <a class="mx-8" href="{{ url_for('gallery') }}" >Story Catalog</a>
+                <a class="mx-8" href="{{ url_for('index') }}" >About</a>
+            </div>
         </nav>
     </header>
-    <h1></h1>
-    <p>
-        
-    </p>
 
+    <main class="flex flex-col items-center ">
+        <!-- div part -->
+        <div class="flex items-center w-1/2 pt-10 h-60  w-3/4 my-10">
+            <div class="flex flex-col items-center h-full justify-around w-1/2">
+                <h2 class="text-5xl font-bold">Your Pictures, <br>Magic Stories</h2>
+                <p class="">
+                    Turn any picture into a fun, personalized story for your little one.
+                </p>
+                <div class="flex justify-around w-3/4">
+                    <a href="{{ url_for('gallery') }}" 
+                    class="text-white text-20 bg-[#FFC73C] hover:bg-[#FFB700] focus:ring-4 focus:ring-blue-300 
+                    font-medium rounded-full shadow-md text-sm px-7.5 py-2.5 dark:bg-blue-600 
+                    dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">See stories</a>
+                    <a href="{{ url_for('new_character') }}" 
+                    class="text-white text-20 bg-[#5FA5FF] hover:bg-[#4E94F0] focus:ring-4 focus:ring-blue-300 
+                    font-medium rounded-full shadow-md text-sm px-7.5 py-2.5 dark:bg-blue-600 
+                    dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Create yours</a>
+                </div>
+            </div>
+            <img class="border-white border-4 rounded-xl h-full " src="../static/assets/story.png" alt="picture of a child reading a book">
+        </div>
+
+        <div class="p-5 flex flex-col items-center">
+            <h3 class="text-2xl font-bold">How the Magic Works</h3>
+            <p>Making your very own story is easy as 1, 2, 3!</p>
+        </div>
+
+        <!-- cards part -->
+        <div class="flex flex-row justify-around w-3/4">
+            <div class="flex flex-col bg-[#fff8db] p-5 w-1/5 items-center shadow-md border-solid border-4  border-white rounded-xl">
+                <i class="bi bi-cloud-plus fs-3 text-[#FFC73C] text-7xl font-black"></i>
+                <h4 class="font-bold">1. Pick a picture</h4>
+                <p >Choose a fun drowing or a photo</p>
+            </div>
+            <div class="flex flex-col bg-[#fff8db] p-5 w-1/5 items-center shadow-md border-solid border-4  border-white rounded-xl">
+                <i class="bi bi-magic fs-3 text-[#5FA5FF] text-7xl font-black"></i>
+                <h4 class="font-bold">2. Add some sparkle</h4>
+                <p >We'll write a magical story</p>
+            </div>
+                    <div class="flex flex-col bg-[#fff8db] p-5 w-1/5 items-center shadow-md border-solid border-4  border-white rounded-xl">
+                <i class="bi bi-stars fs-3 text-[#e298ed] text-7xl font-black"></i>
+                <h4 class="font-bold">3. Read and Smile</h4>
+                <p >Enjoy your new story</p>
+            </div>
+        </div>
+
+
+    </main>
     
 </body>
 </html>

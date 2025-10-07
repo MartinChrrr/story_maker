@@ -4,18 +4,59 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="../static/css/style.css">
+
 </head>
-<body>
-    <h1>Galerie</h1>
-    {% for i in images %}
-    <img src = "{{ url_for('static', filename= i.filename)}}">
+<body class="bg-[#FFF3CC] px-40 my-10 font-comic">
+    <header>
+
+        <nav class=" flex justify-between mx-5 ">
+            <div class="flex flex-row ">
+                <i class="bi bi-book-half text-3xl px-3 text-[#FFC73C]"></i>
+                <h1 class="text-3xl font-extrabold">StorySparkle</h1>
+            </div>
+            <div class="flex justitfy-around ">
+                <a class="mx-8" href="{{ url_for('index') }}" >Home </a>
+                <a class="mx-8" href="{{ url_for('gallery') }}" >Story Catalog</a>
+                <a class="mx-8" href="{{ url_for('index') }}" >About</a>
+            </div>
+        </nav>
+    </header>
+
+    <div class="p-5">
+        <h1 class="text-3xl font-black">Explore Our Magical World</h1>
+    <p class="">Discover a world of imagination and adventure</p>
+    </div>
+    
+
+    <div class="container w-full grid grid-cols-3 gap-4">
+        <!-- cards -->
+        {% for i in images %}
+        <!-- <img src = "{{ url_for('static', filename= i.filename)}}">
     <p>{{i.description}}</p>
-    <p>Tu es nul</p>
+    <p>Tu es nul</p> -->
+            <div class="border-4 border-solid border-black w-3/4 flex flex-col items-center p-5 rounded-xl shadow-[4px_4px_0_#000000] bg-[#fff8db]">
+                <img src="{{ url_for('static', filename= i.filename)}}" class=" w-full  h-2/3 rounded-xl border-3 border-solid border-black">
+                <h2 class="font-black text-xl uppercase p-1">{{i.title}}</h2>
+                <p class=" p-1" >{{i.one_line}}</p>
+                <a href="{{url_for('story', id=i.id)}}" class="text-white text-20 bg-[#FFC73C] hover:bg-[#FFB700] focus:ring-4 focus:ring-blue-300 
+                        font-medium rounded-full shadow-md text-sm px-7.5 py-2.5 dark:bg-blue-600 
+                        dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800 mt-5 mb-2"> View more</a>
+            </div>
+        {% endfor %}
+    </div>
+        
 
-    {% endfor %}
-    <!-- {% for j in descriptions %}
-    <p>{{j}}</p>
 
-    {% endfor %} -->
-</body>
-</html>
+
+
+    </div>
+    </body>
+
+

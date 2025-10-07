@@ -34,6 +34,7 @@ class Image(db.Model):
     hash = db.Column(db.String(32), unique=True, nullable=False)
     description = db.Column(db.TEXT, unique=True, nullable=True)
     one_line = db.Column(db.TEXT, unique=True, nullable=True)
+    title = db.Column(db.TEXT, unique=True, nullable=True)
     
 
 
@@ -94,7 +95,9 @@ def new_character():
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(path)
 
-            desc = l.get_image_description(path)
+            response_llm = l.get_image_description(path)
+            
+
             new_img = Image(filename=filename, data=file_content, hash=img_hash, description=desc)
             db.session.add(new_img)
             db.session.commit()
@@ -109,6 +112,17 @@ def test():
         return "Connexion à la base de données réussie!"
     except Exception as e:
         return f"Erreur de connexion à la base : {str(e)}"
+    
+@app.route('/story', methods=['GET'])
+def story():
+    image_id = request.args.get('id')
+    
+    if image_id is None:
+        return None
+    image = Image.query.get(image_id)
+    if image is None:
+        return None
+    return render_template("story.html", image = image)
 
 if __name__ == "__main__":
     with app.app_context():

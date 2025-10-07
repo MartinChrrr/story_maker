@@ -27,7 +27,8 @@ def get_image_description(image_path):
                 "content": [
                 {
                     "type": "text",
-                    "text": "Tell me a short story for a child between 4 and 7 years old based on this image?"
+                    "text": "I want you to return me a json with 'title' 'text' and 'one_line' .In text i want you to tell me a short story for a child between 4 and 7 years old based on this image.In title I want you to choose a small title And in one_line a short summary in less than 40 charachters"
+    
                 },
                 {
                     "type": "image_url",
@@ -41,7 +42,14 @@ def get_image_description(image_path):
     })
     )
     r = response.json()
-    return r["choices"][0]["message"]["content"]
+    try:
+      return r["choices"][0]["message"]["content"]  
+    except:
+        return r
+
+    
 
 
-print(get_image_description(path))
+response = get_image_description(path)
+# print(json.loads(response))
+# print(response)

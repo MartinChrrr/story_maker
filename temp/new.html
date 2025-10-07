@@ -22,8 +22,8 @@
                 <h1 class="text-3xl font-extrabold">StorySparkle</h1>
             </div>
             <div class="flex justitfy-around ">
-                <a class="mx-8" href="new_character" >Home </a>
-                <a class="mx-8" href="gallery" >Story Catalog</a>
+                <a class="mx-8" href="{{ url_for('index') }}" >Home </a>
+                <a class="mx-8" href="{{ url_for('gallery') }}" >Story Catalog</a>
                 <a class="mx-8" href="#" >About</a>
             </div>
         </nav>
@@ -47,11 +47,11 @@
 </body>
 
 <script>
-  // Quand un fichier est sélectionné, on soumet automatiquement le formulaire
+  //auto submit 
   document.getElementById('user_image').addEventListener('change', function() {
     if (this.files.length > 0) {
       this.form.submit();
-      console.log("Tu es nul")
+      
     }
   });
 </script>

@@ -6,6 +6,7 @@ import psycopg2
 import hashlib
 from werkzeug.utils import secure_filename
 import llm as l
+import json
 
 UPLOAD_FOLDER = "./static/uploaded_images/"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
@@ -58,6 +59,22 @@ def get_hash(img_path):
            img_hash.update(chunk)
     return img_hash.hexdigest()
 
+def get_json_from_response(r):
+    clean_r = r.strip().strip('`')
+    if clean_r.startswith("json"):
+        clean_r = clean_r[4:]  # remove json
+    clean_r = clean_r.strip("`\n ")
+
+    # Find just json
+    start = clean_r.find('{')
+    end = clean_r.rfind('}') + 1
+    json_part = clean_r[start:end]
+
+    # Parse proprement
+    data = json.loads(json_part)
+
+    return data
+
 #routes
 @app.route("/")
 def index():
@@ -77,9 +94,10 @@ def gallery():
 @app.route("/new_character", methods=['GET', 'POST'])
 def new_character():
     if request.method == 'POST':
-        if 'file' not in request.files:
+        if 'user_image' not in request.files:
+            app.logger.info(request.files["user_image"])
             return 'No file part'
-        file = request.files['file']
+        file = request.files['user_image']
         if file.filename == '':
             return 'No selected file'
         if file and allowed_file(file.filename):
@@ -94,11 +112,14 @@ def new_character():
             # Save in database
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(path)
-
+            #llm part
             response_llm = l.get_image_description(path)
-            
+            response = get_json_from_response(response_llm)
+            title = response["title"]
+            desc = response["text"]
+            one_line = response["one_line"]
 
-            new_img = Image(filename=filename, data=file_content, hash=img_hash, description=desc)
+            new_img = Image(filename=filename, data=file_content, hash=img_hash, description=desc, title = title, one_line = one_line)
             db.session.add(new_img)
             db.session.commit()
 
@@ -122,6 +143,9 @@ def story():
     image = Image.query.get(image_id)
     if image is None:
         return None
+    dir = "uploaded_images/"
+    string = dir + image.filename
+    image.filename = string
     return render_template("story.html", image = image)
 
 if __name__ == "__main__":

@@ -29,7 +29,7 @@
         </nav>
     </header>
     <main class="flex flex-col items-center p-10 m-5">
-        <img src="../static/uploaded_images/1.jpg" alt="Picture of the story" class="rounded-xl h-100 w-3/4 object-cover border-4 border-solid border-white">
+        <img src="{{image.filename}}" alt="Picture of the story" class="rounded-xl h-100 w-3/4 object-cover border-4 border-solid border-white">
         <h1 class="mt-5 pb-10 text-3xl font-black uppercase"> {{image.title}}</h1>
         <p class="w-3/4 pb-10"> {{image.description}}</p>
         <a href="{{ url_for('gallery') }}" 

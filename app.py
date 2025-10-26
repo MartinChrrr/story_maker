@@ -145,9 +145,9 @@ def story():
     image = Image.query.get(image_id)
     if image is None:
         return None
-    dir = "uploaded_images/"
-    string = dir + image.filename
-    image.filename = string
+    DIR = "uploaded_images/"
+    path = DIR + image.filename
+    image.filename = path
     return render_template("story.html", image = image)
 
 if __name__ == "__main__":

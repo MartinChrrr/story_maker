@@ -109,7 +109,7 @@ def new_character():
             if Image.query.filter_by(hash=img_hash).first():
                 return "Cette image existe déjà dans la base."
             
-            # Save in database
+            
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(path)
             #llm part
@@ -118,10 +118,12 @@ def new_character():
             title = response["title"]
             desc = response["text"]
             one_line = response["one_line"]
-
+            # Save in database part
             new_img = Image(filename=filename, data=file_content, hash=img_hash, description=desc, title = title, one_line = one_line)
             db.session.add(new_img)
             db.session.commit()
+            #redirection to story
+            redirect(url_for('/story', image_id=new_img.id))
 
     return render_template("new_character.html")
             

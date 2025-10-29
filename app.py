@@ -112,22 +112,57 @@ def new_character():
             
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(path)
+
+            #Loading part
+            return redirect(url_for('loading', filename=filename))
+            #redirect(url_for("loading", filename=filename))
+
             #llm part
-            response_llm = l.get_image_description(path)
-            response = get_json_from_response(response_llm)
-            title = response["title"]
-            desc = response["text"]
-            one_line = response["one_line"]
-            # Save in database part
-            new_img = Image(filename=filename, data=file_content, hash=img_hash, description=desc, title = title, one_line = one_line)
-            db.session.add(new_img)
-            db.session.commit()
-            #redirection to story
-            redirect(url_for('/story', image_id=new_img.id))
+            # response_llm = l.get_image_description(path)
+            # response = get_json_from_response(response_llm)
+            # title = response["title"]
+            # desc = response["text"]
+            # one_line = response["one_line"]
+            # # Save in database part
+            # new_img = Image(filename=filename, data=file_content, hash=img_hash, description=desc, title = title, one_line = one_line)
+            # db.session.add(new_img)
+            # db.session.commit()
+            # #redirection to story
+            # redirect(url_for('/story', image_id=new_img.id))
 
     return render_template("new_character.html")
             
- 
+@app.route("/loading")
+def loading():
+    #loading template html during request
+    filename = request.args.get('filename')
+    return render_template("loading.html", filename=filename)
+
+@app.route("/process_image/<filename>")
+def process_image(filename):
+    path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    #llm part
+    app.logger.info("[process_image] llm")
+    response_llm = l.get_image_description(path)
+    app.logger.info("[process_image] response llm")
+    response = get_json_from_response(response_llm)
+    app.logger.info("[process_image] response json")
+    title = response["title"]
+    desc = response["text"]
+    one_line = response["one_line"]
+    # Save in database part
+    # Get hash
+    with open(path, "rb") as f:
+        file_content = f.read()
+    img_hash, _ = get_md5_from_file(open(path, "rb"))
+    new_img = Image(filename=filename, data=file_content, hash=img_hash, description=desc, title = title, one_line = one_line)
+    db.session.add(new_img)
+    db.session.commit()
+    #redirection to story
+    return redirect(url_for('story', id=new_img.id))
+
+
+
 @app.route("/test")
 def test():
     try:

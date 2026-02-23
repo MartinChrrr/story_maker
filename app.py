@@ -1,42 +1,26 @@
 import os
-import base64
-from flask import Flask, flash, request, redirect, url_for,render_template
-from flask_sqlalchemy import SQLAlchemy
-import psycopg2
+from flask import Flask, request, redirect, url_for, render_template
 import hashlib
 from werkzeug.utils import secure_filename
 import llm as l
 import json
+from extensions import db
+from models import Image
 
 UPLOAD_FOLDER = "./static/uploaded_images/"
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-IMAGE_FOLDER = "./static/uploaded_images/"
 
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-database_url = "postgresql://martin:test@db:5432/mydatabase"
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"postgresql://{os.environ.get('POSTGRES_USER')}:{os.environ.get('POSTGRES_PASSWORD')}"
+    f"@{os.environ.get('POSTGRES_HOST')}:{os.environ.get('POSTGRES_PORT')}/{os.environ.get('POSTGRES_DB')}"
+)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
-
-#Models
-class User(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(80),unique=True,nullable=False)
-    email = db.Column(db.String(120),unique=True,nullable=False)
-
-class Image(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    filename = db.Column(db.String(80), nullable=False)
-    data = db.Column(db.LargeBinary, nullable=False)
-    hash = db.Column(db.String(32), unique=True, nullable=False)
-    description = db.Column(db.TEXT, unique=True, nullable=True)
-    one_line = db.Column(db.TEXT, unique=True, nullable=True)
-    title = db.Column(db.TEXT, unique=True, nullable=True)
-    
+db.init_app(app)
 
 
 
@@ -83,8 +67,6 @@ def index():
 @app.route("/gallery")
 def gallery():
     images = Image.query.all()
-    img_list = []
-    descriptions = []
     for img in images:
         dir = "uploaded_images/"
         string = dir + img.filename
@@ -113,22 +95,7 @@ def new_character():
             path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(path)
 
-            #Loading part
             return redirect(url_for('loading', filename=filename))
-            #redirect(url_for("loading", filename=filename))
-
-            #llm part
-            # response_llm = l.get_image_description(path)
-            # response = get_json_from_response(response_llm)
-            # title = response["title"]
-            # desc = response["text"]
-            # one_line = response["one_line"]
-            # # Save in database part
-            # new_img = Image(filename=filename, data=file_content, hash=img_hash, description=desc, title = title, one_line = one_line)
-            # db.session.add(new_img)
-            # db.session.commit()
-            # #redirection to story
-            # redirect(url_for('/story', image_id=new_img.id))
 
     return render_template("new_character.html")
             
